@@ -15,7 +15,8 @@
     "license": "LICENSE.md",
     "devDependencies": {
         "esm": "3.2.25",
-        "mocha": "6.2.2"
+        "mocha": "6.2.2",
+        "rollup": "^2.35.1"
     },
     "peerDependencies": {
         "bsv": "^1.2.0"

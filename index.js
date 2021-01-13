@@ -68,11 +68,10 @@ export default class Hummingbird {
         this.currheight = 0;
         this.blockheight = 0;
 
-        const node = "209.50.52.199";
         const stream = true;
         const validate = true;
 
-        this.peer = new BitcoinP2P({ node, stream, validate, DEBUG_LOG: false });
+        this.peer = new BitcoinP2P({ node: this.config.peer.host, stream, validate, DEBUG_LOG: false });
 
         this.peer.on('transactions', async ({ header, finished, transactions }) => {
             if (!header) {
@@ -84,7 +83,7 @@ export default class Hummingbird {
                             const tx = await txo.fromTx(txhash);
 
                             this.queue.add(() => {
-                                return this.ontransaction(tx); // return a promise
+                                return this.ontransaction(Object.assign(tx, {hex: txhash})); // return a promise
                             }).catch(e => {
                                 log(`error while processing queue`);
                                 throw e;
@@ -131,7 +130,7 @@ export default class Hummingbird {
                             const tx = await txo.fromTx(txhash);
 
                             this.queue.add(() => {
-                                return this.ontransaction(tx); // return a promise
+                                return this.ontransaction(Object.assign(tx, {hex: txhash})); // return a promise
                             }).catch(e => {
                                 log(`error while processing queue`);
                                 throw e;
@@ -400,7 +399,8 @@ export default class Hummingbird {
                 i: height,
                 h: header.hash.toString("hex"),
                 t: header.time,
-            }
+            },
+            hex: txhash
         });
     }
 
@@ -415,7 +415,8 @@ export default class Hummingbird {
                     i: header.height,
                     h: Buffer.from(header.hash, "hex").toString(),
                     t: header.time,
-                }
+                },
+                hex: txhash
             });
         }));
 
